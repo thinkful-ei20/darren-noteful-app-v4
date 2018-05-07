@@ -16,9 +16,9 @@ const localAuth = passport.authenticate('local', options);
 
 
 // ===== Protected endpoint =====
-router.post('/login', localAuth, function (req, res) {
+router.post('/', localAuth, function (req, res) {
   // console.log(`${req.user.username} successfully logged in.`);
-  return res.json(req.user);
+  return res.json(`${req.user.username} logged in`);
 });
 
 

@@ -3,7 +3,7 @@
 // const passport = require('passport');
 const { Strategy: LocalStrategy } = require('passport-local');
 
-const {User} = require('../models/user');
+const User = require('../models/user');
 
 
 // ===== Define and create basicStrategy =====
@@ -11,6 +11,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
   let user;
   User.findOne({ username })
     .then(results => {
+      console.log('HERE IS THE FINDONE ON USERNAME', username);
       user = results;
       if (!user) {
         return Promise.reject({
