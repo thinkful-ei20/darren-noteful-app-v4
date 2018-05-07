@@ -10,11 +10,6 @@ const passport = require('passport');
 
 const localAuth = passport.authenticate('local', options);
 
-// const mongoose = require('mongoose');
-
-// const User = require('../models/user');
-
-
 // ===== Protected endpoint =====
 router.post('/', localAuth, function (req, res) {
   // console.log(`${req.user.username} successfully logged in.`);
