@@ -55,7 +55,7 @@ router.get('/:id', (req, res, next) => {
     return next(err);
   }
 
-  Note.findOne({_id: id, userId: userId})
+  Note.findOne({_id: id, userId})
     .populate('tags')
     .then(result => {
       if (result) {
@@ -71,7 +71,7 @@ router.get('/:id', (req, res, next) => {
 
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/', (req, res, next) => {
-  const { title, content, folderId, tags = [] } = req.body;
+  const { title, content, folderId, tags = [],userId } = req.body;
 
   /***** Never trust users - validate input *****/
   if (!title) {
@@ -96,7 +96,7 @@ router.post('/', (req, res, next) => {
     });
   }
 
-  Note.create({ title, content, folderId, tags })
+  Note.create({ title, content, folderId, tags,userId })
     .then(result => {
       res
         .location(`${req.originalUrl}/${result.id}`)
