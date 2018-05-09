@@ -79,7 +79,9 @@ router.post('/users', (req,res,next) => {
 
   let {fullname, username, password} = req.body;
 
-  fullname = fullname.trim();
+  if(fullname){
+    fullname = fullname.trim();
+  }
 
   return User.find({username})
     .count()
@@ -95,6 +97,8 @@ router.post('/users', (req,res,next) => {
       return User.hashPassword(password);
     })
     .then(digest => {
+      console.log('Here is the req.body: ',req.body);
+
       const newUser = {
         username,
         password: digest,
@@ -112,6 +116,7 @@ router.post('/users', (req,res,next) => {
       }
       next(err);
     });
+    
 
 });
 
