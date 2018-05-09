@@ -16,8 +16,9 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
   const { searchTerm, folderId, tagId } = req.query;
+  const userId = req.user.id;
 
-  let filter = {};
+  let filter = {userId};
 
   if (searchTerm) {
     // filter.title = { $regex: searchTerm };
@@ -31,6 +32,8 @@ router.get('/', (req, res, next) => {
   if (tagId) {
     filter.tags = tagId;
   }
+
+
 
   Note.find(filter)
     .populate('tags')
@@ -71,7 +74,8 @@ router.get('/:id', (req, res, next) => {
 
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/', (req, res, next) => {
-  const { title, content, folderId, tags = [],userId } = req.body;
+  const { title, content, folderId, tags = [] } = req.body;
+  const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
   if (!title) {
@@ -112,6 +116,7 @@ router.post('/', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
   const { title, content, folderId, tags = [] } = req.body;
+  const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -142,7 +147,7 @@ router.put('/:id', (req, res, next) => {
     });
   }
 
-  Note.findByIdAndUpdate(id, { title, content, folderId, tags }, { new: true })
+  Note.findOneAndUpdate({userId}, { title, content, folderId, tags }, { new: true })
     .then(result => {
       if (result) {
         res.json(result);
@@ -158,8 +163,10 @@ router.put('/:id', (req, res, next) => {
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/:id', (req, res, next) => {
   const { id } = req.params;
+  const userId = req.user.id;
 
-  Note.findByIdAndRemove(id)
+
+  Note.findOneAndRemove({userId, _id:id})
     .then(() => {
       res.status(204).end();
     })
