@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
  
 const { TEST_MONGODB_URI, JWT_SECRET } = require('../config');
 
-const User = require('./models/user');
+const User = require('../models/user');
 
 const expect = chai.expect;
 
@@ -17,6 +17,7 @@ chai.use(chaiHttp);
 //---------------------
 
 describe.only('Noteful API - login', function() {
+
   const fullname = 'Example User';
   const username = 'exampleUser';
   const password = 'password';
@@ -28,7 +29,11 @@ describe.only('Noteful API - login', function() {
 
   beforeEach(function() {
     return User.hashPassword(password)
-      .then(digest => User.create({fullname,username,password:digest}));
+      .then(digest => User.create({
+        fullname,
+        username,
+        password:digest
+      }));
   });
 
   afterEach(function () {
@@ -38,4 +43,64 @@ describe.only('Noteful API - login', function() {
   after(function () {
     return mongoose.disconnect();
   });
+
+  it('Should return a valid auth token', function () {
+    return chai.request(app)
+      .post('/api/login')
+      .send({ username, password })
+      .then(res => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('object');
+        expect(res.body.authToken).to.be.a('string');
+  
+        const payload = jwt.verify(res.body.authToken, JWT_SECRET);
+  
+        expect(payload.user).to.not.have.property('password');
+        expect(payload.user.username).to.equal(username);
+        expect(payload.user.fullname).to.equal(fullname);
+      });
+  });
+
+  it('Should reject requests with no credentials',function () {
+    return chai.request(app)
+      .post('/api/login')
+      .send({})
+      .then(res => {
+        // console.log(res);
+        expect(res).to.have.status(400);
+        expect(res.body.message).to.equal('Bad Request');
+        expect(res.body).to.not.have.property('authToken');
+
+      
+      });
+  });
+
+  it('Should reject requests with incorrect usernames', function() {
+    return chai.request(app)
+      .post('/api/login')
+      .send({username: 'badUser', fullname, password})
+      .then(res => {
+        expect(res).to.have.status(401);
+        expect(res.body.message).to.equal('Unauthorized');        
+      });
+  });
+
+  it('Should reject requests with incorrect passwords',function() {
+    return chai.request(app)
+      .post('/api/login')
+      .send({username, fullname, password: 'passwordBad'})
+      .then(res => {
+        expect(res).to.have.status(401);
+        expect(res.body.message).to.equal('Unauthorized');        
+      });
+  });
+  
+
+
+
+
+
+
+
+
 });
