@@ -1,3 +1,12 @@
 language: node_js
 node_js: node
-services: mongodb
+services: 
+- mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: WoThq3g4BC7bBhD/5gweCWeje0Fq25TyX3B/N15BOkk4xmp7LczA3lsW2xXsNoIUaZoQM83lQ6vbOLneIhWxk1fvbsw+G+AMSDr++YwZEsWmsi0pmIKYyi/w1t3fv4xrwzYFqWc+LeJIaW4AZzKMIpfnKUj/4zhE9mQIEcONgL6/XUHOD5Je14uazJaLlQ97cbfIVccnfgzWqLdu1NpmBxdB2KhpGUCilJbdaUFGwUkTXo1iMblk4ApBAXYaSGqZeM2wvx+LM/34AYfvB3Q5XEGxls8jmSQnbwLn0xJusqlItzbCt+jw6lnsDRaInUhna6JOH0Y4hu2j0plqQ8m8vhgXr0Lh8PSespiBIK8duAgOZukqpx8bRpPZeRb6Qrk7WO2W9NV5tmB3FoYYmBThJRe7auMMV2rJ035V76MDkM67uQ+gpOxBK1AdTfFdcLXOjlVUPZFqLo/U3w9anGKvq3Zi9ztbZgnQ8j5izsz96bqcTCFIdj9af250PQiTwJuff+mVfsZ9ocG0Z5PZjI1N/1I7diTVIXnKm+tMpz6+wLQLzvuI1ZQRydALMHBnKm2egt+aNhtFlL44YrJCj1FrXGwrW9EDesPBwyS6m03/wliv4RH0IhQeuQs7DPVJJ0aTRAE9md95AeFfCAyh6cNjjYyxSj2lwKswsw9ybp4ol50=
+  app: darren-noteful-app-v4
+  on:
+    repo: thinkful-ei20/darren-noteful-app-v4
+
