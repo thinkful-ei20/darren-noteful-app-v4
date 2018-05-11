@@ -122,7 +122,7 @@ router.post('/', (req, res, next) => {
   }
 
   Promise.all([
-    validateFolderId(folderId, userId),
+    // validateFolderId(folderId, userId),
     validateTagIds(tags, userId)
   ])
     .then(() => Note.create(newNote))

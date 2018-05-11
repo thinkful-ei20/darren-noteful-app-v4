@@ -6,6 +6,8 @@ const router = express.Router();
 // const mongoose = require('mongoose');
 
 const User = require('../models/user');
+const Folder = require('../models/folder');
+
 
 router.post('/users', (req,res,next) => {
 
@@ -101,7 +103,7 @@ router.post('/users', (req,res,next) => {
         username,
         password: digest,
         fullname
-      };
+      };  
       return User.create(newUser);
     })
     .then(result => {

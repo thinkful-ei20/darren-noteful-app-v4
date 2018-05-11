@@ -179,36 +179,36 @@ describe('Noteful API - Users', function () {
       });
     });
 
-    describe('GET', function () {
-      it('Should return an empty array initially', function () {
-        return chai.request(app).get('/api/users')
-          .then(res => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.an('array');
-            expect(res.body).to.have.length(0);
-          });
-      });
-      it('Should return an array of users', function () {
-        const testUser0 = {
-          username: `${username}`,
-          password: `${password}`,
-          fullname: ` ${fullname} `
-        };
-        const testUser1 = {
-          username: `${username}1`,
-          password: `${password}1`,
-          fullname: `${fullname}1`
-        };
-        const testUser2 = {
-          username: `${username}2`,
-          password: `${password}2`,
-          fullname: `${fullname}2`
-        };
+    // describe('GET', function () {
+    //   it('Should return an empty array initially', function () {
+    //     return chai.request(app).get('/api/users')
+    //       .then(res => {
+    //         expect(res).to.have.status(200);
+    //         expect(res.body).to.be.an('array');
+    //         expect(res.body).to.have.length(0);
+    //       });
+    //   });
+    //   it('Should return an array of users', function () {
+    //     const testUser0 = {
+    //       username: `${username}`,
+    //       password: `${password}`,
+    //       fullname: ` ${fullname} `
+    //     };
+    //     const testUser1 = {
+    //       username: `${username}1`,
+    //       password: `${password}1`,
+    //       fullname: `${fullname}1`
+    //     };
+    //     const testUser2 = {
+    //       username: `${username}2`,
+    //       password: `${password}2`,
+    //       fullname: `${fullname}2`
+    //     };
 
-        /**
-         * CREATE THE REQUEST AND MAKE ASSERTIONS
-         */
-      });
-    });
+    //     /**
+    //      * CREATE THE REQUEST AND MAKE ASSERTIONS
+    //      */
+    //   });
+    // });
   });
 });

@@ -141,7 +141,7 @@ describe('Noteful API - Folders', function () {
       };
       let body;
       return chai.request(app)
-        .post('/api/folders').set('Authorization', `Bearer ${token}`)
+        .post('/api/folders')
         .send(newItem)
         .set('Authorization', `Bearer ${token}`)
         .then(function (res) {
