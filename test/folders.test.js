@@ -4,25 +4,42 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const mongoose = require('mongoose');
 
-const { TEST_MONGODB_URI } = require('../config');
+const { TEST_MONGODB_URI, JWT_SECRET } = require('../config');
 
 const Folder = require('../models/folder');
 const seedFolders = require('../db/seed/folders');
+const seedUsers = require('../db/seed/users');
+const User = require('../models/user');
 
-
+const jwt = require('jsonwebtoken');
 const expect = chai.expect;
 
 chai.use(chaiHttp);
 
 describe('Noteful API - Folders', function () {
+
+  let token;
+  let user;
+
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI)
       .then(() => mongoose.connection.db.dropDatabase());
   });
 
   beforeEach(function () {
-    return Folder.insertMany(seedFolders)
-      .then(() => Folder.createIndexes());
+    return Promise.all(seedUsers.map(user => User.hashPassword(user.password)))
+      .then(digest => {
+        seedUsers.forEach((user,i) => user.password = digest[i]);
+        return Promise.all([
+          User.insertMany(seedUsers),
+          Folder.insertMany(seedFolders),
+          Folder.createIndexes()
+        ]);
+      })
+      .then(([users]) => {
+        user = users[0];
+        token = jwt.sign({ user }, JWT_SECRET, { subject: user.username });
+      });
   });
 
   afterEach(function () {
@@ -33,13 +50,14 @@ describe('Noteful API - Folders', function () {
     return mongoose.disconnect();
   });
 
-  describe('GET /api/folders', function () {
+  describe.only('GET /api/folders', function () {
 
     it('should return the correct number of folders', function () {
-      return Promise.all([
-        Folder.find(),
-        chai.request(app).get('/api/folders')
-      ])
+      const dbPromise = Folder.find({userId: user.id});
+      const apiPromise = chai.request(app)
+        .get('/api/folders').set('Authorization', `Bearer ${token}`);
+
+      return Promise.all([dbPromise,apiPromise])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
@@ -49,10 +67,10 @@ describe('Noteful API - Folders', function () {
     });
 
     it('should return a list with the correct right fields', function () {
-      return Promise.all([
-        Folder.find(),
-        chai.request(app).get('/api/folders')
-      ])
+      const dbPromise = Folder.find({userId: user.id});
+      const apiPromise = chai.request(app)
+        .get('/api/folders').set('Authorization', `Bearer ${token}`);
+      return Promise.all([dbPromise,apiPromise])
         .then(([data, res]) => {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
@@ -60,7 +78,7 @@ describe('Noteful API - Folders', function () {
           expect(res.body).to.have.length(data.length);
           res.body.forEach(function (item) {
             expect(item).to.be.a('object');
-            expect(item).to.have.keys('id', 'name', 'createdAt', 'updatedAt');
+            expect(item).to.have.keys('id', 'userId', 'name', 'createdAt', 'updatedAt');
           });
         });
     });

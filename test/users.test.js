@@ -69,7 +69,8 @@ describe('Noteful API - Users', function () {
       });
       it('Should reject users with missing username', function () {
         const testUser = { password, fullname };
-        return chai.request(app).post('/api/users').send(testUser)
+        return chai.request(app).post('/api/users')
+          .send(testUser)
           .then(res => {
             expect(res).to.have.status(422);
             expect(res.body.message).to.equal('Missing \'username\' in request body'); 
