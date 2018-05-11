@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 
 //---------------------
 
-describe.only('Noteful API - login', function() {
+describe('Noteful API - login', function() {
 
   const fullname = 'Example User';
   const username = 'exampleUser';
